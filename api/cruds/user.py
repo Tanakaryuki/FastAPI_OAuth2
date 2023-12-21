@@ -18,5 +18,5 @@ def creatr_user(db: Session, signup: user_schema.UserSignupRequest) -> user_mode
     return user
 
 
-def read_user_by_id(db: Session, id: str) -> user_model.User | None:
-    return db.query(user_model.User).filter(user_model.User.id == id).first()
+def read_user_by_username(db: Session, username: str) -> user_model.User | None:
+    return db.query(user_model.User).filter(user_model.User.username == username).first()

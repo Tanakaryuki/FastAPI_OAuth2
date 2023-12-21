@@ -2,9 +2,9 @@ from pydantic import BaseModel, Field
 
 
 class TaskCreateRequest(BaseModel):
-    title: str | None = Field(None, example="抽選で10名様に美食ツアーをプレゼント")
-    detail: str = Field(..., example="抽選で10名の幸運な参加者に、豪華な美食ツアーをプレゼントします!!")
-    administrator_id: str = Field(..., example="admin")
+    title: str | None = Field(None, example="A社への連絡")
+    detail: str = Field(..., example="12/22までにA社のBさんにアドベントカレンダーを提出する")
+    administrator_username: str = Field(..., example="admin")
     id: str = Field(..., example="oishi_o_123", description="Event.id")
 
     class Config:
@@ -13,7 +13,8 @@ class TaskCreateRequest(BaseModel):
 class TaskDeteilResponse(BaseModel):
     id: str
     title: str
-    administrator_id: str
+    detail: str
+    administrator_username: str
 
     class Config:
         from_attributes = True

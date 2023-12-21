@@ -8,7 +8,7 @@ class User(Base):
 
     uuid = Column(String(48), default=generate_uuid,
                   primary_key=True, index=True)
-    id = Column(String(48), unique=True, nullable=False, index=True)
+    username = Column(String(48), unique=True, nullable=False, index=True)
     email = Column(String(48), unique=True, nullable=False)
     hashed_password = Column(String(96), nullable=False)
     display_name = Column(String(96), nullable=False)
