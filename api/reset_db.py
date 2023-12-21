@@ -10,5 +10,5 @@ def reset_database(db_url):
 
 
 if __name__ == "__main__":
-    DB_URL = "mysql+pymysql://root:root_password@aouth_db:3306/demo?charset=utf8"
+    DB_URL = "mysql+pymysql://root:root_password@oauth_db:3306/demo?charset=utf8"
     reset_database(DB_URL)

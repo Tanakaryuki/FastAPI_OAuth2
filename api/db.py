@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DB_URL = "mysql+pymysql://root:root_password@aouth_db:3306/demo?charset=utf8"
+DB_URL = "mysql+pymysql://root:root_password@oauth_db:3306/demo?charset=utf8"
 
 engine = create_engine(DB_URL)
 LocalSession = sessionmaker(engine)
