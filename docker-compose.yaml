@@ -1,9 +1,9 @@
 version: "3"
 services:
-  aouth_api:
-    container_name: aouth_api
+  oauth_api:
+    container_name: oauth_api
     depends_on:
-      aouth_db:
+      oauth_db:
         condition: service_healthy
     build: .
     volumes:
@@ -11,8 +11,8 @@ services:
       - .:/src
     ports:
       - 8000:8000
-  aouth_db:
-    container_name: aouth_database
+  oauth_db:
+    container_name: oauth_database
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root_password
