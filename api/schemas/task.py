@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 class TaskCreateRequest(BaseModel):
     title: str | None = Field(None, example="A社への連絡")
     detail: str = Field(..., example="12/22までにA社のBさんにアドベントカレンダーを提出する")
-    administrator_username: str = Field(..., example="admin")
+    # administrator_username: str = Field(..., example="admin")
     id: str = Field(..., example="oishi_o_123", description="Event.id")
 
     class Config:

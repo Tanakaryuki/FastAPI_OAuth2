@@ -4,9 +4,11 @@ from sqlalchemy import and_
 import api.models.task as task_model
 import api.schemas.task as task_schema
 
-def create_task(db: Session, task: task_schema.TaskCreateRequest) -> task_model.Task | None:
+def create_task(db: Session, administrator_username: str, task: task_schema.TaskCreateRequest) -> task_model.Task | None:
+    if read_task_by_id(db=db,id=task.id):
+        return None
     task_dict = task.model_dump()
-    task = task_model.Task(**task_dict)
+    task = task_model.Task(administrator_username=administrator_username,**task_dict)
     db.add(task)
     db.commit()
     db.refresh(task)

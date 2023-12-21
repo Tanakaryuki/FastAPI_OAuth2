@@ -3,13 +3,15 @@ from sqlalchemy.orm import Session
 
 import api.schemas.task as task_schema
 import api.cruds.task as task_crud
+import api.models.user as user_model
+from api.routers.user import _get_current_user
 from api.db import get_db
 
 router = APIRouter()
 
 @router.post("/task", description="新しいタスクを作成するために使用されます。", tags=["tasks"])
-def create_event(request: task_schema.TaskCreateRequest, db: Session = Depends(get_db)):
-    event = task_crud.create_task(db=db,task=request)
+def create_event(request: task_schema.TaskCreateRequest,current_user: user_model.User = Depends(_get_current_user), db: Session = Depends(get_db)):
+    event = task_crud.create_task(db=db,administrator_username=current_user.username,task=request)
     if not event:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
 

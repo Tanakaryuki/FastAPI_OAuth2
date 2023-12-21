@@ -11,3 +11,19 @@ class UserSignupRequest(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class UserInformationResponse(BaseModel):
+    uuid: str
+    email: EmailStr
+    username: str
+    display_name: str
+    is_admin: bool
+    created_at: datetime
+    updated_at: datetime | None
+
+    class Config:
+        from_attributes = True
+        
+class Token(BaseModel):
+    access_token: str
+    token_type: str
