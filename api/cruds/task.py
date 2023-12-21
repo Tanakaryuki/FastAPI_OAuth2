@@ -14,5 +14,5 @@ def create_task(db: Session, administrator_username: str, task: task_schema.Task
     db.refresh(task)
     return task
 
-def read_task_by_id(db: Session, id: str) -> task_model.Task | None:
-    return db.query(task_model.Task).filter(task_model.Task.id == id).first()
+def read_task_by_id(db: Session, id: str,username: str) -> task_model.Task | None:
+    return db.query(task_model.Task).filter(and_(task_model.Task.id == id,task_model.Task.administrator_username == username)).first()

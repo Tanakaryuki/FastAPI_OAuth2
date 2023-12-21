@@ -18,6 +18,6 @@ def create_event(request: task_schema.TaskCreateRequest,current_user: user_model
     return status.HTTP_201_CREATED
 
 @router.get("/task/{id}", response_model=task_schema.TaskDeteilResponse, description="タスク詳細を取得するために使用されます。", tags=["tasks"])
-def get_task(id: str,db: Session = Depends(get_db)):
-    task = task_crud.read_task_by_id(db=db,id=id)
+def get_task(id: str,current_user: user_model.User = Depends(_get_current_user),db: Session = Depends(get_db)):
+    task = task_crud.read_task_by_id(db=db,id=id,username=current_user.username)
     return task
