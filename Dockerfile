@@ -1,20 +1,21 @@
-# python3.11のイメージをダウンロード
-FROM python:3.11-buster
-ENV PYTHONUNBUFFERED=1
+FROM python:3.12.4-slim-bookworm as requirements-stage
 
-WORKDIR /src
+WORKDIR /tmp
 
-# pipを使ってpoetryをインストール
 RUN pip install poetry
 
-# poetryの定義ファイルをコピー (存在する場合)
-COPY pyproject.toml* poetry.lock* ./
+COPY ./pyproject.toml ./poetry.lock* /tmp/
 
-# poetryでライブラリをインストール (pyproject.tomlが既にある場合)
-RUN poetry config virtualenvs.in-project false
-RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-COPY . .
+FROM python:3.12.4-slim-bookworm
 
-# uvicornのサーバーを立ち上げる
-ENTRYPOINT ["poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--reload"]
+WORKDIR /code
+
+COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./app /code/app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload"]
