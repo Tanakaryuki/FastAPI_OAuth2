@@ -44,17 +44,15 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 def refresh_access_token(refresh_token: str, db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        exp: str = payload.get("exp")
-        print(username, exp)
-        if username is None or exp is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="decode失敗")
-        print(user_crud.read_refresh_token(db=db, refresh_token=refresh_token))
-        if not user_crud.read_refresh_token(db=db, refresh_token=refresh_token):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token が存在しない")
-        if datetime.now(timezone.utc) > datetime.fromtimestamp(exp, timezone.utc):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token has expired")
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="decoding failed")
+    username: str = payload.get("sub")
+    exp: str = payload.get("exp")
+    if username is None or exp is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="decoding failed")
+    if not user_crud.read_refresh_token(db=db, refresh_token=refresh_token):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token does not exist")
+    if datetime.now(timezone.utc) > datetime.fromtimestamp(exp, timezone.utc):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token has expired")
     access_token = create_access_token(data={"sub": username})
     return {"refresh_token":refresh_token,"access_token": access_token, "token_type": "bearer"}
