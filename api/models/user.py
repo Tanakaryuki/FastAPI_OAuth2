@@ -1,4 +1,4 @@
-from sqlalchemy import func, Column,String, Boolean, DateTime, String
+from sqlalchemy import func, Column,String, Boolean, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from api.db import Base, generate_uuid
 
@@ -17,3 +17,12 @@ class User(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     
     tasks_administered = relationship("Task", back_populates="administrator")
+    refresh_tokens = relationship("RefreshToken", back_populates="user")
+
+class RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True)
+    refresh_token = Column(String(300), nullable=False)
+    user_uuid = Column(String(48), ForeignKey("Users.uuid"), unique=True, index=True, nullable=False)
+    user = relationship("User", back_populates="refresh_tokens")

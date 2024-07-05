@@ -6,7 +6,7 @@ import api.schemas.user as user_schema
 from passlib.context import CryptContext
 
 
-def creatr_user(db: Session, signup: user_schema.UserSignupRequest) -> user_model.User | None:
+def create_user(db: Session, signup: user_schema.UserSignupRequest) -> user_model.User | None:
     signup_dict = signup.model_dump()
     signup_dict.pop("password", None)
     hashed_password = CryptContext(["bcrypt"]).hash(signup.password)
@@ -17,6 +17,21 @@ def creatr_user(db: Session, signup: user_schema.UserSignupRequest) -> user_mode
     db.refresh(user)
     return user
 
-
 def read_user_by_username(db: Session, username: str) -> user_model.User | None:
     return db.query(user_model.User).filter(user_model.User.username == username).first()
+
+def create_refresh_token(db: Session, user_uuid: int, refresh_token: str):
+    db_refresh_token = db.query(user_model.RefreshToken).filter(user_model.RefreshToken.user_uuid == user_uuid).first()
+    if db_refresh_token:
+        db_refresh_token.refresh_token = refresh_token
+    else:
+        db_refresh_token = user_model.RefreshToken(user_uuid=user_uuid, refresh_token=refresh_token)
+        db.add(db_refresh_token)
+    db.commit()
+    db.refresh(db_refresh_token)
+    return db_refresh_token
+
+def read_refresh_token(db: Session, refresh_token: str) -> bool:
+    db_token = db.query(user_model.RefreshToken).filter(user_model.RefreshToken.refresh_token == refresh_token).first()
+    print(db_token)
+    return db_token is not None
