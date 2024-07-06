@@ -1,6 +1,11 @@
 from sqlalchemy import create_engine
 from api.models.user import Base
 from api.models.task import Base
+import os
+from dotenv import load_dotenv
+
+load_dotenv(verbose=True)
+DATABASE_URL = str(os.getenv("DATABASE_URL"))
 
 
 def reset_database(db_url):
@@ -10,5 +15,4 @@ def reset_database(db_url):
 
 
 if __name__ == "__main__":
-    DB_URL = "mysql+pymysql://root:root_password@oauth_db:3306/demo?charset=utf8"
-    reset_database(DB_URL)
+    reset_database(DATABASE_URL)

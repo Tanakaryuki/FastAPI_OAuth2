@@ -2,10 +2,13 @@ from uuid import uuid4
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
 
-DB_URL = "mysql+pymysql://root:root_password@oauth_db:3306/demo?charset=utf8"
+load_dotenv(verbose=True)
+DATABASE_URL = str(os.getenv("DATABASE_URL"))
 
-engine = create_engine(DB_URL)
+engine = create_engine(DATABASE_URL)
 LocalSession = sessionmaker(engine)
 
 Base = declarative_base()
