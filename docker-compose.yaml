@@ -1,4 +1,3 @@
-version: "3"
 services:
   oauth_api:
     container_name: oauth_api
@@ -7,10 +6,10 @@ services:
         condition: service_healthy
     build: .
     volumes:
-      - .dockervenv:/src/.venv
-      - .:/src
+      - .:/code
     ports:
       - 8000:8000
+
   oauth_db:
     container_name: oauth_database
     image: mysql:8.0
@@ -24,9 +23,9 @@ services:
       - 33306:3306
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
+      interval: 1s
       timeout: 10s
-      retries: 5
+      retries: 10
     devices:
       - "/dev/urandom:/dev/random"
 volumes:
