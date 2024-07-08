@@ -37,7 +37,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     access_token = create_access_token(data={"sub": user.username})
     refresh_token = create_refresh_token(data={"sub": user.username})
-    user_crud.create_refresh_token(db=db, user_uuid=user.uuid, refresh_token=refresh_token)
+    user_crud.create_refresh_token(db=db, username=user.username, refresh_token=refresh_token)
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 @router.post("/token/refresh", description="リフレッシュトークンから新しいアクセストークンを取得するために使用されます。", response_model=user_schema.Token)
@@ -50,7 +50,7 @@ def refresh_access_token(refresh_token: str, db: Session = Depends(get_db)):
     exp: str = payload.get("exp")
     if username is None or exp is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="decoding failed")
-    if not user_crud.read_refresh_token(db=db, refresh_token=refresh_token):
+    if not user_crud.read_refresh_token(db=db, refresh_token=refresh_token,username=username):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token does not exist")
     if datetime.now(timezone.utc) > datetime.fromtimestamp(exp, timezone.utc):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token has expired")

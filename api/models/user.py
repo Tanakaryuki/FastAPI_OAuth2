@@ -24,5 +24,5 @@ class RefreshToken(Base):
 
     id = Column(Integer, primary_key=True)
     refresh_token = Column(String(300), nullable=False)
-    user_uuid = Column(String(48), ForeignKey("Users.uuid"), unique=True, index=True, nullable=False)
+    user_username = Column(String(48), ForeignKey("Users.username"), unique=True, index=True, nullable=False)
     user = relationship("User", back_populates="refresh_tokens")
