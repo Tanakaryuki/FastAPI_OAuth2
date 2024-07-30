@@ -1,50 +1,50 @@
-name: Build and Deploy to Cloud Run
+# name: Build and Deploy to Cloud Run
 
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: ["main"]
+#   workflow_dispatch:
 
-jobs:
-  deploy:
-    permissions:
-      contents: "read"
-      id-token: "write"
+# jobs:
+#   deploy:
+#     permissions:
+#       contents: "read"
+#       id-token: "write"
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
 
-      - name: Google Auth
-        id: auth
-        uses: "google-github-actions/auth@v2"
-        with:
-          token_format: "access_token"
-          workload_identity_provider: "${{ secrets.WIF_PROVIDER }}"
-          service_account: "${{ secrets.WIF_SERVICE_ACCOUNT }}"
+#       - name: Google Auth
+#         id: auth
+#         uses: "google-github-actions/auth@v2"
+#         with:
+#           token_format: "access_token"
+#           workload_identity_provider: "${{ secrets.WIF_PROVIDER }}"
+#           service_account: "${{ secrets.WIF_SERVICE_ACCOUNT }}"
 
-      - name: Docker Auth
-        id: docker-auth
-        uses: "docker/login-action@v3"
-        with:
-          username: "oauth2accesstoken"
-          password: "${{ steps.auth.outputs.access_token }}"
-          registry: "${{ secrets.GAR_LOCATION }}-docker.pkg.dev"
+#       - name: Docker Auth
+#         id: docker-auth
+#         uses: "docker/login-action@v3"
+#         with:
+#           username: "oauth2accesstoken"
+#           password: "${{ steps.auth.outputs.access_token }}"
+#           registry: "${{ secrets.GAR_LOCATION }}-docker.pkg.dev"
 
-      - name: Build and Push Container
-        run: |-
-          docker build -t "${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.SERVICE }}:${{ github.sha }}" ./
-          docker push "${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.SERVICE }}:${{ github.sha }}"
+#       - name: Build and Push Container
+#         run: |-
+#           docker build -t "${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.SERVICE }}:${{ github.sha }}" ./
+#           docker push "${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.SERVICE }}:${{ github.sha }}"
 
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: ${{ secrets.SERVICE }}
-          region: ${{ secrets.REGION }}
-          image: ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.SERVICE }}:${{ github.sha }}
+#       - name: Deploy to Cloud Run
+#         id: deploy
+#         uses: google-github-actions/deploy-cloudrun@v2
+#         with:
+#           service: ${{ secrets.SERVICE }}
+#           region: ${{ secrets.REGION }}
+#           image: ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.SERVICE }}:${{ github.sha }}
 
-      # If required, use the Cloud Run url output in later steps
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
+#       # If required, use the Cloud Run url output in later steps
+#       - name: Show Output
+#         run: echo ${{ steps.deploy.outputs.url }}
