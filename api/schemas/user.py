@@ -1,16 +1,15 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from datetime import datetime
 
 
 class UserSignupRequest(BaseModel):
-    email: EmailStr = Field(..., example="example@example.com")
-    password: str = Field(..., example="password")
-    username: str = Field(..., example="admin")
-    display_name: str = Field(..., example="福岡太郎")
-    is_admin: bool = Field(..., example=True)
+    email: EmailStr = Field(..., json_schema_extra={"example": "example@example.com"})
+    password: str = Field(..., json_schema_extra={"example": "password"})
+    username: str = Field(..., json_schema_extra={"example": "admin"})
+    display_name: str = Field(..., json_schema_extra={"example": "福岡太郎"})
+    is_admin: bool = Field(..., json_schema_extra={"example": "true"})
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict()
         
 class UserInformationResponse(BaseModel):
     uuid: str
@@ -21,8 +20,7 @@ class UserInformationResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict()
 
 class Token(BaseModel):
     access_token: str
