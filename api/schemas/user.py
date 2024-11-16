@@ -10,7 +10,8 @@ class UserSignupRequest(BaseModel):
     is_admin: bool = Field(..., json_schema_extra={"example": "true"})
 
     model_config = ConfigDict()
-        
+
+
 class UserInformationResponse(BaseModel):
     uuid: str
     email: EmailStr
@@ -21,6 +22,7 @@ class UserInformationResponse(BaseModel):
     updated_at: datetime | None
 
     model_config = ConfigDict()
+
 
 class Token(BaseModel):
     access_token: str
