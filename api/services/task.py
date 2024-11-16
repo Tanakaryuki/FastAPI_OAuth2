@@ -5,9 +5,16 @@ import api.schemas.task as task_schema
 import api.models.task as task_model
 
 
-def create_task(db: Session, administrator_username: str, task: task_schema.TaskCreateRequest)->None:
-    if task_crud.read_task_by_id(db=db, id=task.id):
+def create_task(
+    db: Session, administrator_username: str, task: task_schema.TaskCreateRequest
+) -> None:
+    if (
+        task_crud.read_task_by_id(db=db, id=task.id, username=administrator_username)
+        is not None
+    ):
         raise ValueError("Task already exists")
-    task = task_model.Task(administrator_username=administrator_username, **task.model_dump())
+    task = task_model.Task(
+        administrator_username=administrator_username, **task.model_dump()
+    )
     task_crud.create_task(db=db, task=task)
     return None
