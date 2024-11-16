@@ -18,3 +18,9 @@ def create_task(
     )
     task_crud.create_task(db=db, task=task)
     return None
+
+def get_task(db: Session, id: str, username: str) -> task_model.Task:
+    task = task_crud.read_task_by_id(db=db, id=id, username=username)
+    if task is None:
+        raise ValueError("Task not found")
+    return task

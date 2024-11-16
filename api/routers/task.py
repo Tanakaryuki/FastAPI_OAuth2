@@ -40,5 +40,9 @@ def get_task(
     current_user: user_model.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    task = task_crud.read_task_by_id(db=db, id=id, username=current_user.username)
+    try:
+        task = user_service.get_task(db=db, id=id, username=current_user.username)
+    except ValueError as e:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=str(e))
+
     return task
